@@ -14,34 +14,33 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
-use function Livewire\after;
 
 class CategoryResource extends Resource
 {
+    /** Model Eloquent yang dikelola Resource ini. */
     protected static ?string $model = Category::class;
 
+    /** Ikon sidebar. v5 memakai enum Heroicon, bukan string 'heroicon-o-...'. */
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    /** Grup menu di sidebar. Tipe UnitEnum agar bisa pakai enum grup kustom. */
     protected static string|UnitEnum|null $navigationGroup = 'Master Data';
 
-   // protected static string|UnitEnum|null $navigationLabel = 'Kategori';
+    /** Teks menu sidebar. */
     protected static ?string $navigationLabel = 'Kategori';
 
+    /** Label tunggal — muncul di tombol "New Kategori", judul modal, notifikasi. */
     protected static ?string $modelLabel = 'Kategori';
+
+    /** Label jamak — muncul di judul halaman list. */
     protected static ?string $pluralModelLabel = 'Kategori';
+
+    /** Urutan dalam grup (makin kecil makin atas). */
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
         return CategoryForm::configure($schema);
-        // return $form->schema([
-        //     Form\Components\Textinput::make('name')
-        //         ->label('Nama Kategori')
-        //         ->required()
-        //         ->maxLength(255),
-        //         ->live(onBlur: true)
-        //         ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set)
-        //          => $set('slug', \Str::slug($state))) :null
-        // ]);
     }
 
     public static function table(Table $table): Table
@@ -59,9 +58,15 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListCategories::route('/'),
+            'index'  => ListCategories::route('/'),
             'create' => CreateCategory::route('/create'),
-            'edit' => EditCategory::route('/{record}/edit'),
+            'edit'   => EditCategory::route('/{record}/edit'),
         ];
+    }
+
+    /** Badge angka di sebelah menu sidebar. */
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
     }
 }

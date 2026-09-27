@@ -1,41 +1,44 @@
 <?php
 
-namespace App\Filament\Resources\Categories\Tables;
+namespace App\Filament\Resources\Posts\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class CategoriesTable
+class PostsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->label('Nama')
-                    ->sortable()
+                TextColumn::make('category_id')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('user_id')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('title')
                     ->searchable(),
                 TextColumn::make('slug')
-                    ->label('Slug')
-                    ->sortable()
                     ->searchable(),
-                TextColumn::make('posts_count')
-                    ->label('Jumlah Berita')
-                    ->counts('posts')
-                    ->sortable()
-                    ->badge()
-                    ->color(fn (int $state): string => $state > 0 ? 'success' : 'danger'),
+                TextColumn::make('thumbnail')
+                    ->searchable(),
+                TextColumn::make('status')
+                    ->badge(),
+                IconColumn::make('is_featured')
+                    ->boolean(),
+                TextColumn::make('published_at')
+                    ->dateTime()
+                    ->sortable(),
                 TextColumn::make('created_at')
-                    ->label("Dibuat")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->label("Diedit")
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -45,13 +48,11 @@ class CategoriesTable
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->defaultSort('name');
+            ]);
     }
 }
