@@ -13,12 +13,25 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Override;
+use UnitEnum;
 
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Konten';
+
+    protected static ?string $navigationLabel = 'Berita';
+
+    protected static ?string $modelLabel = 'Berita';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema
     {
@@ -44,5 +57,12 @@ class PostResource extends Resource
             'create' => CreatePost::route('/create'),
             'edit' => EditPost::route('/{record}/edit'),
         ];
+    }
+
+    #[Override]
+    //eager load relasi agar tabelnya ini gak n+1
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['category', 'user']);
     }
 }
